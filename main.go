@@ -56,8 +56,19 @@ func copyFile(src, dst string) error {
 	return err
 }
 
-func main() {
+func generateRandomRow(tempFileRoute string, file File) error {
+	fmt.Println("| Generating random row for", file.Name, "in", tempFileRoute)
+	/*
+	 * 1. Open the file
+	 * 2. Delete the first row
+	 * 3. Read last row
+	 * 4. Create new record based on the last row and config
+	 * 5. Write the new record to the file
+	 */
+	return nil
+}
 
+func main() {
 	// Retrieve config from config.json
 	var config Config = retrieveConfig()
 
@@ -65,18 +76,34 @@ func main() {
 	for _, file := range config.Files {
 		fmt.Println("| Processing", file.Name)
 
-		// We make a temporary copy of the file
-		currentFile := config.FolderData + file.Name
-		tempFile := config.FolderTemp + "temp_" + file.Name
+		// Create a temporary copy of the file
+		originalFileRoute := config.DataFolder + file.Name
+		tempFileRoute := config.TempFolder + "temp_" + file.Name
 
-		err := copyFile(currentFile, tempFile)
+		err := copyFile(originalFileRoute, tempFileRoute)
 
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 
-		err = os.Remove(tempFile)
+		// Generate a random in the tempFile
+		err = generateRandomRow(tempFileRoute, file)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		// Copy the temp file to the original file
+		err = copyFile(tempFileRoute, originalFileRoute)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		// And finally remove the temp file after the process
+		err = os.Remove(tempFileRoute)
 		if err != nil {
 			fmt.Println(err)
 			return

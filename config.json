@@ -1,6 +1,6 @@
 {
-  "folderData": "/Users/sh1ken/dev/aqf/current/aqf-data-simulator/data/",
-  "folderTemp": "/Users/sh1ken/dev/aqf/current/aqf-data-simulator/temp/",
+  "dataFolder": "/Users/sh1ken/dev/aqf/current/aqf-data-simulator/data/",
+  "tempFolder": "/Users/sh1ken/dev/aqf/current/aqf-data-simulator/temp/",
   "files": [
     {
       "name": "PBS.dat",

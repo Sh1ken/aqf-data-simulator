@@ -20,7 +20,7 @@ type File struct {
 }
 
 type Config struct {
-	FolderData string `json:"folderData"`
-	FolderTemp string `json:"folderTemp"`
+	DataFolder string `json:"dataFolder"`
+	TempFolder string `json:"tempFolder"`
 	Files      []File `json:"files"`
 }
