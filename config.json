@@ -1,9 +1,11 @@
 {
-  "folder": "/Users/sh1ken/dev/aqf/current/aqf-data-simulator/data",
+  "folderData": "/Users/sh1ken/dev/aqf/current/aqf-data-simulator/data/",
+  "folderTemp": "/Users/sh1ken/dev/aqf/current/aqf-data-simulator/temp/",
   "files": [
     {
       "name": "PBS.dat",
       "separator": ",",
+      "intervalMinutes": 5,
       "dateConfig": {
         "format": "dd-MM-yyyy HH:mm:ss",
         "gmt": "-4" 
@@ -49,6 +51,7 @@
     {
       "name": "RUCUE.dat",
       "separator": ",",
+      "intervalMinutes": 10,
       "dateConfig": {
         "format": "dd-MM-yyyy HH:mm:ss",
         "gmt": "-4" 
