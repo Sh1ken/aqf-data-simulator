@@ -80,6 +80,21 @@ func removeNewlines(text string) string {
 	return strings.ReplaceAll(text, "\n", "")
 }
 
+// TODO: random data generation
+func generateRandomDate(columnName string, lastValue string) string {
+	return lastValue
+}
+
+// TODO: random data generation
+func generateRandomInt(columnName string, lastValue string) string {
+	return lastValue
+}
+
+// TODO: random data generation
+func generateRandomFloat(columnName string, lastValue string) string {
+	return lastValue
+}
+
 func generateRandomRow(tempFileRoute string, file File) error {
 	// First, we delete the first line of the file
 	err := deleteFirstLine(tempFileRoute)
@@ -103,7 +118,16 @@ func generateRandomRow(tempFileRoute string, file File) error {
 
 	for index, column := range file.Columns {
 		fmt.Println("| Generating data for", column.Name)
-		newRowData = append(newRowData, lastRowColumns[index])
+		switch column.Type {
+		case "datetime":
+			newRowData = append(newRowData, generateRandomDate(column.Name, lastRowColumns[index]))
+		case "int":
+			newRowData = append(newRowData, generateRandomInt(column.Name, lastRowColumns[index]))
+		case "float":
+			newRowData = append(newRowData, generateRandomFloat(column.Name, lastRowColumns[index]))
+		default:
+			return fmt.Errorf("Unknown type '%s'", column.Type)
+		}
 	}
 
 	// Finally, we append a new line with randomized data
