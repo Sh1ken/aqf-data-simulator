@@ -4,9 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
+	"time"
 )
 
 func retrieveConfig() Config {
@@ -77,22 +80,104 @@ func appendToFile(filename, text string) error {
 }
 
 func removeNewlines(text string) string {
-	return strings.ReplaceAll(text, "\n", "")
+	processedText := strings.ReplaceAll(text, "\r", "")
+	return strings.ReplaceAll(processedText, "\n", "")
 }
 
-// TODO: random data generation
-func generateRandomDate(columnName string, lastValue string) string {
-	return lastValue
+func addIntervalToCurrentDate(currentDateString string, dateConfig DateConfig) (string, error) {
+	// Convert the last value to a date
+	currentDate, err := time.Parse(dateConfig.Format, strings.ReplaceAll(currentDateString, "\"", ""))
+	if err != nil {
+		return "", err
+	}
+
+	// Add the interval to the date
+	currentDate = currentDate.Add(time.Minute * time.Duration(dateConfig.Interval))
+
+	return "\"" + currentDate.Format(dateConfig.Format) + "\"", nil
 }
 
-// TODO: random data generation
-func generateRandomInt(columnName string, lastValue string) string {
-	return lastValue
+func generateRandomDate(columnName string, lastValue string, dateConfig DateConfig) (string, error) {
+	lastValueDate := ""
+	err := error(nil)
+
+	switch columnName {
+	case "timestamp":
+		lastValueDate, err = addIntervalToCurrentDate(lastValue, dateConfig)
+		if err != nil {
+			return "", err
+		}
+	default:
+		return "", fmt.Errorf("Unknown column '%s'", columnName)
+	}
+
+	return lastValueDate, nil
 }
 
-// TODO: random data generation
-func generateRandomFloat(columnName string, lastValue string) string {
-	return lastValue
+func generateRandomInt(columnName string, lastValue string) (string, error) {
+	switch columnName {
+	case "id":
+		lastValueInt, err := strconv.Atoi(lastValue)
+		if err != nil {
+			return "", err
+		}
+		return strconv.Itoa(lastValueInt + 1), nil
+	default:
+		return "", fmt.Errorf("Unknown column '%s'", columnName)
+	}
+}
+
+func generateBiasedFloat(lastValueFloat float64, maxBiasPercentage float64) float64 {
+	// Generate a random float between -maxBiasPercentage and maxBiasPercentage
+	bias := (rand.Float64() * maxBiasPercentage * 2) - maxBiasPercentage
+
+	// Add the bias to the last value
+	valueVariation := lastValueFloat * (bias / 100)
+	lastValueFloat += valueVariation
+
+	// If the value is negative, return 0
+	if lastValueFloat < 0 {
+		return 0
+	}
+
+	// Return the new value
+	return lastValueFloat
+}
+
+func generateRandomFloat(columnName string, lastValue string) (string, error) {
+	lastValueFloat := float64(0)
+	err := error(nil)
+
+	switch columnName {
+	case "battery":
+		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
+		lastValueFloat = generateBiasedFloat(lastValueFloat, 10.0)
+	case "temp":
+		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
+		lastValueFloat = generateBiasedFloat(lastValueFloat, 10.0)
+	case "level":
+		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
+		lastValueFloat = generateBiasedFloat(lastValueFloat, 10.0)
+	case "rain":
+		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
+		lastValueFloat = generateBiasedFloat(lastValueFloat, 15.0)
+	case "turbidity":
+		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
+		lastValueFloat = generateBiasedFloat(lastValueFloat, 20.0)
+	case "caudal_ls":
+		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
+		lastValueFloat = generateBiasedFloat(lastValueFloat, 5.0)
+	case "velocity":
+		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
+		lastValueFloat = generateBiasedFloat(lastValueFloat, 5.0)
+	default:
+		return "", fmt.Errorf("Unknown column '%s'", columnName)
+	}
+
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%.2f", lastValueFloat), nil
 }
 
 func generateRandomRow(tempFileRoute string, file File) error {
@@ -115,19 +200,30 @@ func generateRandomRow(tempFileRoute string, file File) error {
 	// Then we generate data based on the last row that we just got
 	lastRowColumns := strings.Split(lastRow, file.Separator)
 	newRowData := []string{}
+	currentColumnContent := ""
 
 	for index, column := range file.Columns {
 		fmt.Println("| Generating data for", column.Name)
+		fmt.Println("| Old:", lastRowColumns[index])
+
 		switch column.Type {
 		case "datetime":
-			newRowData = append(newRowData, generateRandomDate(column.Name, lastRowColumns[index]))
+			currentColumnContent, err = generateRandomDate(column.Name, lastRowColumns[index], file.DateConfig)
 		case "int":
-			newRowData = append(newRowData, generateRandomInt(column.Name, lastRowColumns[index]))
+			currentColumnContent, err = generateRandomInt(column.Name, lastRowColumns[index])
 		case "float":
-			newRowData = append(newRowData, generateRandomFloat(column.Name, lastRowColumns[index]))
+			currentColumnContent, err = generateRandomFloat(column.Name, lastRowColumns[index])
 		default:
 			return fmt.Errorf("Unknown type '%s'", column.Type)
 		}
+
+		if err != nil {
+			return err
+		}
+
+		fmt.Println("| New:", currentColumnContent)
+
+		newRowData = append(newRowData, currentColumnContent)
 	}
 
 	// Finally, we append a new line with randomized data

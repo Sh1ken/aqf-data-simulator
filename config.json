@@ -5,14 +5,14 @@
     {
       "name": "PBS.dat",
       "separator": ",",
-      "intervalMinutes": 5,
       "dateConfig": {
-        "format": "dd-MM-yyyy HH:mm:ss",
-        "gmt": "-4" 
+        "format": "02-01-2006 15:04:05",
+        "gmt": "-4",
+        "intervalMinutes": 5
       },
       "columns": [
         {
-          "name": "time",
+          "name": "timestamp",
           "type": "datetime",
           "position": 0
         },
@@ -51,14 +51,14 @@
     {
       "name": "RUCUE.dat",
       "separator": ",",
-      "intervalMinutes": 10,
       "dateConfig": {
-        "format": "dd-MM-yyyy HH:mm:ss",
-        "gmt": "-4" 
+        "format": "02-01-2006 15:04:05",
+        "gmt": "-4",
+        "intervalMinutes": 10
       },
       "columns": [
         {
-          "name": "time",
+          "name": "timestamp",
           "type": "datetime",
           "position": 0
         },

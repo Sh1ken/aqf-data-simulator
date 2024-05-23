@@ -7,14 +7,14 @@ type Column struct {
 }
 
 type DateConfig struct {
-	Format string `json:"format"`
-	Gmt    string `json:"gmt"`
+	Format   string `json:"format"`
+	Gmt      string `json:"gmt"`
+	Interval int    `json:"intervalMinutes"`
 }
 
 type File struct {
 	Name       string     `json:"name"`
 	Separator  string     `json:"separator"`
-	Interval   int        `json:"intervalMinutes"`
 	DateConfig DateConfig `json:"dateConfig"`
 	Columns    []Column   `json:"columns"`
 }
