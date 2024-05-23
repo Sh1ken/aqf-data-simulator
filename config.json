@@ -1,0 +1,90 @@
+{
+  "folder": "/Users/sh1ken/dev/aqf/current/aqf-data-simulator/data",
+  "files": [
+    {
+      "name": "PBS.dat",
+      "separator": ",",
+      "dateConfig": {
+        "format": "dd-MM-yyyy HH:mm:ss",
+        "gmt": "-4" 
+      },
+      "columns": [
+        {
+          "name": "time",
+          "type": "datetime",
+          "position": 0
+        },
+        {
+          "name": "id",
+          "type": "int",
+          "position": 1
+        },
+        {
+          "name": "battery",
+          "type": "float",
+          "position": 2
+        },
+        {
+          "name": "level",
+          "type": "float",
+          "position": 3
+        },
+        {
+          "name": "temp",
+          "type": "float",
+          "column": 4
+        },
+        {
+          "name": "rain",
+          "type": "float",
+          "column": 5 
+        },
+        {
+          "name": "turbidity",
+          "type": "float",
+          "column": 6
+        }
+      ]
+    },
+    {
+      "name": "RUCUE.dat",
+      "separator": ",",
+      "dateConfig": {
+        "format": "dd-MM-yyyy HH:mm:ss",
+        "gmt": "-4" 
+      },
+      "columns": [
+        {
+          "name": "time",
+          "type": "datetime",
+          "position": 0
+        },
+        {
+          "name": "id",
+          "type": "int",
+          "position": 1
+        },
+        {
+          "name": "battery",
+          "type": "float",
+          "position": 2
+        },
+        {
+          "name": "caudal_ls",
+          "type": "float",
+          "position": 3
+        },
+        {
+          "name": "velocity",
+          "type": "float",
+          "column": 4
+        },
+        {
+          "name": "level",
+          "type": "float",
+          "column": 5 
+        }
+      ]
+    }
+  ]
+}
