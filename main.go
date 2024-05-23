@@ -1,11 +1,3 @@
-/*
- * 1. Loop through all files in data folder via config.json
- * 2. Make a copy of current file
- * 3. Delete first line
- * 4. Add a new line with randomized data (consider interval)
- * 5. Save the file and overwrite the original
- * 6. Sleep for a minute and do the process again
- */
 package main
 
 import (
@@ -89,8 +81,6 @@ func removeNewlines(text string) string {
 }
 
 func generateRandomRow(tempFileRoute string, file File) error {
-	fmt.Println("| Generating random row for", file.Name, "in", tempFileRoute)
-
 	// First, we delete the first line of the file
 	err := deleteFirstLine(tempFileRoute)
 	if err != nil {
@@ -169,12 +159,7 @@ func main() {
 			return
 		}
 
-		fmt.Println("|", file.Name, "finished")
-
-		// fmt.Println(file.Name, file.Separator, file.Interval, file.DateConfig.Format, file.DateConfig.Gmt)
-		// for _, column := range file.Columns {
-		// 	fmt.Println(column.Name, column.Type, column.Position)
-		// }
+		fmt.Println("| Closing", file.Name)
 	}
 
 	fmt.Println("|----")
