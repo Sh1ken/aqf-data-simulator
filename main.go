@@ -162,7 +162,6 @@ func generateRandomFloat(columnName string, lastValue string) (string, error) {
 		} else {
 			lastValueFloat = 1 + 4*rand.Float64()
 		}
-
 	}
 
 	valuePercentageVariation := 0.0
@@ -206,7 +205,7 @@ func generateRandomRow(tempFileRoute string, file File) error {
 
 	// Remove any new lines from the last row
 	lastRow = removeNewlines(lastRow)
-	fmt.Println("| Last row:", lastRow)
+	fmt.Println("| Old:", lastRow)
 
 	// Then we generate data based on the last row that we just got
 	lastRowColumns := strings.Split(lastRow, file.Separator)
@@ -214,8 +213,8 @@ func generateRandomRow(tempFileRoute string, file File) error {
 	currentColumnContent := ""
 
 	for index, column := range file.Columns {
-		fmt.Println("| Generating data for", column.Name)
-		fmt.Println("| Old:", lastRowColumns[index])
+		// fmt.Println("| Generating data for", column.Name)
+		// fmt.Println("| Old:", lastRowColumns[index])
 
 		switch column.Type {
 		case "datetime":
@@ -232,14 +231,14 @@ func generateRandomRow(tempFileRoute string, file File) error {
 			return err
 		}
 
-		fmt.Println("| New:", currentColumnContent)
+		// fmt.Println("| New:", currentColumnContent)
 
 		newRowData = append(newRowData, currentColumnContent)
 	}
 
 	// Finally, we append a new line with randomized data
 	newRow := strings.Join(newRowData, file.Separator)
-	fmt.Println("| New row:", newRow)
+	fmt.Println("| New:", newRow)
 	err = appendToFile(tempFileRoute, newRow)
 	if err != nil {
 		return err
@@ -248,14 +247,15 @@ func generateRandomRow(tempFileRoute string, file File) error {
 	return nil
 }
 
-func main() {
+func generateRows() {
 	// Retrieve config from config.json
 	var config Config = retrieveConfig()
 
 	// For each station
 	for _, file := range config.Files {
 		fmt.Println("|----")
-		fmt.Println("| Initializing", file.Name)
+		fmt.Println("|", file.Name)
+		fmt.Println("|")
 
 		// Create a temporary copy of the file
 		originalFileRoute := config.DataFolder + file.Name
@@ -290,8 +290,19 @@ func main() {
 			return
 		}
 
-		fmt.Println("| Closing", file.Name)
 	}
 
 	fmt.Println("|----")
+}
+
+func main() {
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			generateRows()
+		}
+	}
 }
