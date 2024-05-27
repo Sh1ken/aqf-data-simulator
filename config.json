@@ -34,17 +34,17 @@
         {
           "name": "temp",
           "type": "float",
-          "column": 4
+          "position": 4
         },
         {
           "name": "rain",
           "type": "float",
-          "column": 5 
+          "position": 5 
         },
         {
           "name": "turbidity",
           "type": "float",
-          "column": 6
+          "position": 6
         }
       ]
     },
@@ -80,12 +80,12 @@
         {
           "name": "velocity",
           "type": "float",
-          "column": 4
+          "position": 4
         },
         {
           "name": "level",
           "type": "float",
-          "column": 5 
+          "position": 5 
         }
       ]
     }
