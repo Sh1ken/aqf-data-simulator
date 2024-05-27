@@ -145,39 +145,50 @@ func generateBiasedFloat(lastValueFloat float64, maxBiasPercentage float64) floa
 }
 
 func generateRandomFloat(columnName string, lastValue string) (string, error) {
-	lastValueFloat := float64(0)
-	err := error(nil)
-
-	switch columnName {
-	case "battery":
-		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
-		lastValueFloat = generateBiasedFloat(lastValueFloat, 10.0)
-	case "temp":
-		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
-		lastValueFloat = generateBiasedFloat(lastValueFloat, 10.0)
-	case "level":
-		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
-		lastValueFloat = generateBiasedFloat(lastValueFloat, 10.0)
-	case "rain":
-		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
-		lastValueFloat = generateBiasedFloat(lastValueFloat, 15.0)
-	case "turbidity":
-		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
-		lastValueFloat = generateBiasedFloat(lastValueFloat, 20.0)
-	case "caudal_ls":
-		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
-		lastValueFloat = generateBiasedFloat(lastValueFloat, 5.0)
-	case "velocity":
-		lastValueFloat, err = strconv.ParseFloat(lastValue, 64)
-		lastValueFloat = generateBiasedFloat(lastValueFloat, 5.0)
-	default:
-		return "", fmt.Errorf("Unknown column '%s'", columnName)
-	}
+	lastValueFloat, err := strconv.ParseFloat(lastValue, 64)
 
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("%.2f", lastValueFloat), nil
+
+	if lastValueFloat < 0 {
+		return "", fmt.Errorf("Negative value for column '%s'", columnName)
+	}
+
+	// 70% of the time, the value will still be 0
+	if lastValueFloat == 0 {
+		if rand.Float64() < 0.7 {
+			lastValueFloat = 0
+		} else {
+			lastValueFloat = 1 + 4*rand.Float64()
+		}
+
+	}
+
+	valuePercentageVariation := 0.0
+
+	switch columnName {
+	case "battery":
+		valuePercentageVariation = 10.0
+	case "temp":
+		valuePercentageVariation = 10.0
+	case "level":
+		valuePercentageVariation = 10.0
+	case "rain":
+		valuePercentageVariation = 15.0
+	case "turbidity":
+		valuePercentageVariation = 20.0
+	case "caudal_ls":
+		valuePercentageVariation = 5.0
+	case "velocity":
+		valuePercentageVariation = 5.0
+	default:
+		return "", fmt.Errorf("Unknown column '%s'", columnName)
+	}
+
+	biasedValue := generateBiasedFloat(lastValueFloat, valuePercentageVariation)
+
+	return fmt.Sprintf("%.2f", biasedValue), nil
 }
 
 func generateRandomRow(tempFileRoute string, file File) error {
